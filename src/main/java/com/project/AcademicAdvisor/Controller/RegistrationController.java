@@ -48,5 +48,27 @@ public class RegistrationController {
         }
 
     }
+    @PostMapping("/login")
+    public ResponseEntity<String>login(@RequestBody UserDto userDto){
+    	if(!userService.existsByUserName(userDto.getUserName())) {
+    		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid username");
+    	}
+    	if(!userService.existsByPassword(userDto.getPassword())) {
+    		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid password");
+    	}
+    	 
+    	Role userRole=userService.getRoleByUserName(userDto.getUserName());
+    	
+    	switch(userRole) {
+    	case ADMIN:
+    		return ResponseEntity.status(HttpStatus.OK).body("Redirect to admin dashboard");
+    	case ADVISOR:
+    		return ResponseEntity.status(HttpStatus.OK).body("Redirct to advisor dashboard");
+    	case STUDENT:
+    		return ResponseEntity.status(HttpStatus.OK).body("Redirect to student dashboard");
+    	 default:
+             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unknown Role");
+    	}
+    }
 
 }

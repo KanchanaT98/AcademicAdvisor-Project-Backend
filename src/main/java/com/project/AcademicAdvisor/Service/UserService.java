@@ -2,6 +2,8 @@ package com.project.AcademicAdvisor.Service;
 
 import com.project.AcademicAdvisor.Dto.UserDto;
 import com.project.AcademicAdvisor.Model.User;
+import com.project.AcademicAdvisor.Model.Enums.Role;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,9 @@ public class UserService {
     public static boolean existsByUserName(String userName) {
         return userRepository.existsByUserName(userName);
     }
-
+    public static boolean existsByPassword(String password) {
+    	 return userRepository.existsByPassword(password);
+    }
     public static ResponseEntity<String> createUser(UserDto userDto) {
         User user = new User();
         user.setUserName(userDto.getUserName());
@@ -39,4 +43,12 @@ public class UserService {
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User Registration Successfull...!");
     }
+    public Role getRoleByUserName(String userName) {
+        User user = userRepository.findByUserName(userName);
+        if (user != null) {
+            return user.getRole();
+        }
+        throw new RuntimeException("User not found");
+    }
+
 }
